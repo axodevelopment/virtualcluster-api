@@ -34,7 +34,7 @@ func main() {
 	var svc *sb.Service
 
 	fmt.Println(serviceName + " Service.New")
-	svc, _ = sb.New("AirportApp", sb.WithPort(Port), sb.WithHealthProbe(true))
+	svc, _ = sb.New(serviceName, sb.WithPort(Port), sb.WithHealthProbe(true))
 
 	//TODO: May need to revisit how startSvc works this lets
 	go func(svc *sb.Service) {
@@ -46,7 +46,9 @@ func main() {
 		serviceLogic(svc)
 	}(svc)
 
+	//Need to wait until we are ready for the svc to go
 	<-APP_READY
+
 	//start the backend
 	go func(s *sb.Service) {
 		sb.Start(s)
@@ -85,7 +87,6 @@ func validateSvc() {
 	}
 }
 
-// .... this doesn't seem to save much time probably should just use flag or something equivalent
 func parseEnv() {
 	EnvVar := u.GetEnvVars("APP_PORT", "APP_UKEY")
 
