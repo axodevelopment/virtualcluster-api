@@ -88,41 +88,33 @@ func getKubeClient() (*kubernetes.Clientset, error) {
 	var err error
 
 	if AppConfig.UseLocalKube {
-		fmt.Println("A")
+
 		if homedir := homedir.HomeDir(); homedir != "" {
 			p := filepath.Join(homedir, ".kube", "config")
 
 			cfg, err = clientcmd.BuildConfigFromFlags("", p)
 
 			if err != nil {
-				fmt.Println("B")
 				return nil, err
 			}
 
 		} else {
-			fmt.Println("C")
 			return nil, &InvalidSetupError{}
 		}
 	} else {
-		fmt.Println("D")
 		cfg, err = rest.InClusterConfig()
 
 		if err != nil {
-			fmt.Println("H")
 			return nil, err
 		}
 	}
 
-	fmt.Println("E")
-	fmt.Println(cfg)
 	clientset, cerr := kubernetes.NewForConfig(cfg)
 
 	if cerr != nil {
-		fmt.Println("F")
 		return nil, err
 	}
 
-	fmt.Println("G")
 	return clientset, nil
 }
 
@@ -155,7 +147,7 @@ func serviceLogic(svc *sb.Service) {
 	}
 
 	for _, v := range pods.Items {
-		fmt.Println(v)
+		fmt.Println(v.Name)
 	}
 
 	close(APP_READY)
