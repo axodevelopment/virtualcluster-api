@@ -5,36 +5,46 @@ import (
 
 	"net/http"
 	"os"
-	"strconv"
+
+	"github.com/spf13/viper"
 
 	sb "github.com/axodevelopment/servicebase"
 	u "github.com/axodevelopment/servicebase/pkg/utils"
 	"github.com/gin-gonic/gin"
 )
 
+type Config struct {
+	Port int
+	UKey string
+}
+
 var (
 	serviceName = "VIRTUALCLUSTERS-REST"
 
 	EnvVar    map[string]u.EnvVar
 	APP_READY chan struct{}
-	Port      int
-	UKey      string
+	config    *Config
 )
 
 func main() {
 	defer fmt.Println(serviceName + " Application Exiting ...")
 	fmt.Println(serviceName + " Application Starting ...")
 
-	initSvc()
+	var err error
+	config, err = loadConfig()
 
-	parseEnv()
+	if err != nil {
+		panic("Config not parsing / missing")
+	}
+
+	initSvc()
 
 	validateSvc()
 
 	var svc *sb.Service
 
 	fmt.Println(serviceName + " Service.New")
-	svc, _ = sb.New(serviceName, sb.WithPort(Port), sb.WithHealthProbe(true))
+	svc, _ = sb.New(serviceName, sb.WithPort(config.Port), sb.WithHealthProbe(true))
 
 	//TODO: May need to revisit how startSvc works this lets
 	go func(svc *sb.Service) {
@@ -81,36 +91,29 @@ func startSvc(svc *sb.Service) {
 }
 
 func validateSvc() {
-	if Port <= 0 {
+	if config.Port <= 0 {
 		panic("Port should be greater then 0.")
-
 	}
 }
 
-func parseEnv() {
-	EnvVar := u.GetEnvVars("APP_PORT", "APP_UKEY")
+func loadConfig() (*Config, error) {
+	viper.SetEnvPrefix("APP")
 
-	//convert even if it doesn't exist sine we do this anyway
-	Port = 8080
+	viper.BindEnv("PORT")
+	viper.BindEnv("UKEY")
 
-	sport := EnvVar["APP_PORT"].Value
+	viper.AutomaticEnv()
 
-	if sport != "" {
-		iport, err := strconv.Atoi(sport)
+	config := &Config{
+		Port: viper.GetInt("PORT"),
+		UKey: viper.GetString("UKEY"),
+	}
 
-		if err == nil {
-			Port = iport
-			fmt.Println("OsEnvVar Found - [APP_PORT] => set to ", Port)
-		}
-	} else {
+	if config.Port <= 0 {
 		fmt.Println("OsEnvVar NotFound - [APP_PORT] => defaulted to 8080")
+		config.Port = 8080
 	}
 
-	if !EnvVar["APP_UKEY"].Exists {
-		fmt.Println("ParseEnv NotFound - [APP_UKEY] => ? applied")
-		UKey = "?"
-	} else {
-		UKey = EnvVar["APP_UKEY"].Value
-	}
-
+	//for now nil error in the future validation would could prevent panic and work in a limited state ie a db connection or something
+	return config, nil
 }
