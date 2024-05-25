@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: virtualcluster-api
+  namespace: virtualcluster-system
+  labels:
+    app: virtualcluster-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: virtualcluster-api
+  template:
+    metadata:
+      labels:
+        app: virtualcluster-api
+    spec:
+      serviceAccountName: virtualcluster-api
+      containers:
+        - name: virtualcluster-api
+          image: docker.io/axodevelopment/virtualcluster-api:v1.0.a
+          ports:
+            - containerPort: 8080
+          env:
+            - name: APP_PORT
+              value: "8080"

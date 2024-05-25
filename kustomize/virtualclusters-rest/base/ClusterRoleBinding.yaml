@@ -1,0 +1,12 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: virtualcluster-reader-binding
+subjects:
+- kind: ServiceAccount
+  name: virtualcluster-api
+  namespace: virtualcluster-system
+roleRef:
+  kind: ClusterRole
+  name: virtualcluster-reader
+  apiGroup: rbac.authorization.k8s.io
