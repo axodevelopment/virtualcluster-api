@@ -13,6 +13,7 @@ import (
 
 	sb "github.com/axodevelopment/servicebase"
 	u "github.com/axodevelopment/servicebase/pkg/utils"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 
 	//"k8s.io/apimachinery/pkg/api/errors"
