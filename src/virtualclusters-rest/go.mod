@@ -4,10 +4,9 @@ go 1.22.3
 
 require (
 	github.com/axodevelopment/ocp-virtualcluster/controller v0.0.0-20240525055020-c63ead81a525
-	github.com/axodevelopment/servicebase v0.0.7
+	github.com/axodevelopment/servicebase v0.0.9
 	github.com/gin-gonic/gin v1.10.0
 	github.com/spf13/viper v1.18.2
-	k8s.io/apimachinery v0.30.1
 	k8s.io/client-go v0.30.1
 )
 
@@ -22,6 +21,7 @@ require (
 	github.com/emicklei/go-restful/v3 v3.11.0 // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.3 // indirect
+	github.com/gin-contrib/cors v1.7.2 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-logr/logr v1.4.1 // indirect
 	github.com/go-openapi/jsonpointer v0.19.6 // indirect
@@ -76,6 +76,7 @@ require (
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	k8s.io/api v0.30.1 // indirect
+	k8s.io/apimachinery v0.30.1 // indirect
 	k8s.io/klog/v2 v2.120.1 // indirect
 	k8s.io/kube-openapi v0.0.0-20240228011516-70dd3763d340 // indirect
 	k8s.io/utils v0.0.0-20230726121419-3b25d923346b // indirect

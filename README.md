@@ -7,3 +7,5 @@ https://github.com/axodevelopment/ocp-virtualcluster
 
 This is the dynamic plug repo
 https://github.com/axodevelopment/virtualcluster-plugin
+
+docker buildx build --platform linux/amd64 -t docker.io/axodevelopment/virtualcluster-api:v1.0.c --push .

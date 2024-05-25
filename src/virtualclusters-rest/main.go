@@ -13,7 +13,6 @@ import (
 
 	sb "github.com/axodevelopment/servicebase"
 	u "github.com/axodevelopment/servicebase/pkg/utils"
-	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 
 	//"k8s.io/apimachinery/pkg/api/errors"
@@ -65,7 +64,7 @@ func main() {
 	var svc *sb.Service
 
 	fmt.Println(serviceName + " Service.New")
-	svc, _ = sb.New(serviceName, sb.WithPort(AppConfig.Port), sb.WithHealthProbe(true))
+	svc, _ = sb.New(serviceName, sb.WithPort(AppConfig.Port), sb.WithHealthProbe(true), sb.WithCORS(true))
 
 	kubeClientset, err = getKubeClient()
 
