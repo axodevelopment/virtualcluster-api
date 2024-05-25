@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"path/filepath"
 
@@ -15,7 +16,8 @@ import (
 	"github.com/gin-gonic/gin"
 
 	//"k8s.io/apimachinery/pkg/api/errors"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	//metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	organizationv1 "github.com/axodevelopment/ocp-virtualcluster/controller/api/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
@@ -34,6 +36,8 @@ var (
 	EnvVar    map[string]u.EnvVar
 	APP_READY chan struct{}
 	AppConfig *Config
+
+	kubeClientset *kubernetes.Clientset
 )
 
 type InvalidSetupError struct{}
@@ -62,15 +66,23 @@ func main() {
 	fmt.Println(serviceName + " Service.New")
 	svc, _ = sb.New(serviceName, sb.WithPort(AppConfig.Port), sb.WithHealthProbe(true))
 
+	kubeClientset, err = getKubeClient()
+
+	if err != nil {
+
+		fmt.Println("Not expecting an error from getKubeClient")
+		panic(err)
+	}
+
 	//TODO: May need to revisit how startSvc works this lets
-	go func(svc *sb.Service) {
+	go func(svc *sb.Service, client *kubernetes.Clientset) {
 		//we are ready to go
 		//start our dependencies
 		startSvc(svc)
 
 		fmt.Println(serviceName + " starting core logic")
-		serviceLogic(svc)
-	}(svc)
+		serviceLogic(svc, client)
+	}(svc, kubeClientset)
 
 	//Need to wait until we are ready for the svc to go
 	<-APP_READY
@@ -124,31 +136,62 @@ func initSvc() {
 
 }
 
-func serviceLogic(svc *sb.Service) {
+func getVirtualClustersByNamespace(namespace string, client *kubernetes.Clientset) (organizationv1.VirtualClusterList, error) {
+
+	var vcs organizationv1.VirtualClusterList
+	//test by getting pods and displaying them
+	//pods, err := client.CoreV1().Pods("openshift-multus").List(context.TODO(), metav1.ListOptions{})
+	result := client.RESTClient().
+		Get().
+		AbsPath("/apis/organization.prototypes.com/v1").
+		Namespace(namespace). //Namespace("operator-virtualcluster").
+		Resource("virtualclusters").
+		Do(context.TODO())
+
+	if result.Error() != nil {
+		return vcs, result.Error()
+	}
+
+	raw, err := result.Raw()
+
+	if err != nil {
+		return vcs, err
+	}
+
+	err = json.Unmarshal(raw, &vcs)
+
+	if err != nil {
+		return vcs, err
+	}
+
+	/*
+		for _, v := range vcs.Items {
+			fmt.Println("VC found [" + v.Name + "]")
+
+			for _, vm := range v.Spec.VirtualMachines {
+				fmt.Println(vm)
+			}
+		}
+	*/
+
+	return vcs, nil
+}
+
+func serviceLogic(svc *sb.Service, client *kubernetes.Clientset) {
 
 	svc.GinEngine.GET("/", func(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, os.Args)
 	})
 
-	//for now we will test our kubeconfig create code
-	client, e := getKubeClient()
+	svc.GinEngine.GET("/virtualcluster/api/virtualcluster/:namespace", func(ctx *gin.Context) {
+		vcs, err := getVirtualClustersByNamespace(ctx.Param("namespace"), client)
 
-	if e != nil {
-
-		fmt.Println("Not expecting an error from getKubeClient")
-		panic(e)
-	}
-
-	//test by getting pods and displaying them
-	pods, err := client.CoreV1().Pods("openshift-multus").List(context.TODO(), metav1.ListOptions{})
-
-	if err != nil {
-		panic(err)
-	}
-
-	for _, v := range pods.Items {
-		fmt.Println(v.Name)
-	}
+		if err != nil {
+			ctx.JSON(http.StatusNotFound, nil)
+		} else {
+			ctx.JSON(http.StatusOK, vcs)
+		}
+	})
 
 	close(APP_READY)
 }
