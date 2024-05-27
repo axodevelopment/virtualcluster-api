@@ -136,6 +136,67 @@ func initSvc() {
 
 }
 
+func getVirtualClustersByAllNamespace(client *kubernetes.Clientset) (organizationv1.VirtualClusterList, error) {
+
+	var vcs organizationv1.VirtualClusterList
+
+	result := client.RESTClient().
+		Get().
+		AbsPath("/apis/organization.prototypes.com/v1").
+		Resource("virtualclusters").
+		Do(context.TODO())
+
+	if result.Error() != nil {
+		return vcs, result.Error()
+	}
+
+	raw, err := result.Raw()
+
+	if err != nil {
+		return vcs, err
+	}
+
+	err = json.Unmarshal(raw, &vcs)
+
+	if err != nil {
+		return vcs, err
+	}
+
+	return vcs, nil
+}
+
+func getVirtualClustersByNamespaceName(namespace string, name string, client *kubernetes.Clientset) (organizationv1.VirtualClusterList, error) {
+
+	var vcs organizationv1.VirtualClusterList
+	//test by getting pods and displaying them
+	//pods, err := client.CoreV1().Pods("openshift-multus").List(context.TODO(), metav1.ListOptions{})
+	result := client.RESTClient().
+		Get().
+		AbsPath("/apis/organization.prototypes.com/v1").
+		Name(name).
+		Namespace(namespace). //Namespace("operator-virtualcluster").
+		Resource("virtualclusters").
+		Do(context.TODO())
+
+	if result.Error() != nil {
+		return vcs, result.Error()
+	}
+
+	raw, err := result.Raw()
+
+	if err != nil {
+		return vcs, err
+	}
+
+	err = json.Unmarshal(raw, &vcs)
+
+	if err != nil {
+		return vcs, err
+	}
+
+	return vcs, nil
+}
+
 func getVirtualClustersByNamespace(namespace string, client *kubernetes.Clientset) (organizationv1.VirtualClusterList, error) {
 
 	var vcs organizationv1.VirtualClusterList
@@ -164,16 +225,6 @@ func getVirtualClustersByNamespace(namespace string, client *kubernetes.Clientse
 		return vcs, err
 	}
 
-	/*
-		for _, v := range vcs.Items {
-			fmt.Println("VC found [" + v.Name + "]")
-
-			for _, vm := range v.Spec.VirtualMachines {
-				fmt.Println(vm)
-			}
-		}
-	*/
-
 	return vcs, nil
 }
 
@@ -183,8 +234,31 @@ func serviceLogic(svc *sb.Service, client *kubernetes.Clientset) {
 		ctx.JSON(http.StatusOK, os.Args)
 	})
 
-	svc.GinEngine.GET("/virtualcluster/api/virtualcluster/:namespace", func(ctx *gin.Context) {
+	svc.GinEngine.GET("/virtualcluster/api/virtualclusters/:namespace", func(ctx *gin.Context) {
 		vcs, err := getVirtualClustersByNamespace(ctx.Param("namespace"), client)
+
+		if err != nil {
+			ctx.JSON(http.StatusNotFound, nil)
+		} else {
+			ctx.JSON(http.StatusOK, vcs)
+		}
+	})
+
+	svc.GinEngine.GET("/virtualcluster/api/virtualclusters/:namespace/:name", func(ctx *gin.Context) {
+		namespace := ctx.Param("namespace")
+		name := ctx.Param("name")
+
+		vcs, err := getVirtualClustersByNamespaceName(namespace, name, client)
+
+		if err != nil {
+			ctx.JSON(http.StatusNotFound, nil)
+		} else {
+			ctx.JSON(http.StatusOK, vcs)
+		}
+	})
+
+	svc.GinEngine.GET("/virtualcluster/api/virtualclusters", func(ctx *gin.Context) {
+		vcs, err := getVirtualClustersByAllNamespace(client)
 
 		if err != nil {
 			ctx.JSON(http.StatusNotFound, nil)
