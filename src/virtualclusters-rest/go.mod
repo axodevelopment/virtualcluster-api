@@ -3,7 +3,7 @@ module github.com/axodevelopment/virtualcluster-api/virtualclusters-rest
 go 1.22.3
 
 require (
-	github.com/axodevelopment/ocp-virtualcluster/controller v0.0.0-20240525055020-c63ead81a525
+	github.com/axodevelopment/ocp-virtualcluster/controller v0.0.0-20240529220406-417dd92c89c4
 	github.com/axodevelopment/servicebase v0.0.9
 	github.com/gin-gonic/gin v1.10.0
 	github.com/spf13/viper v1.18.2

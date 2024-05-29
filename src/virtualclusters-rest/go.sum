@@ -1,5 +1,5 @@
-github.com/axodevelopment/ocp-virtualcluster/controller v0.0.0-20240525055020-c63ead81a525 h1:mFGGAJ4aMZ4RX7MB3sQaB/zVp7414GsH7xkhKIFeJLU=
-github.com/axodevelopment/ocp-virtualcluster/controller v0.0.0-20240525055020-c63ead81a525/go.mod h1:SfwXvuGoDAZZXTb6QkbPgcuu9nUCm0aAG4Pff6kAdjI=
+github.com/axodevelopment/ocp-virtualcluster/controller v0.0.0-20240529220406-417dd92c89c4 h1:K+ryD68Wh0P1pAwFSZSxtXdrsRJPB33vh7iW+rAvvjY=
+github.com/axodevelopment/ocp-virtualcluster/controller v0.0.0-20240529220406-417dd92c89c4/go.mod h1:SfwXvuGoDAZZXTb6QkbPgcuu9nUCm0aAG4Pff6kAdjI=
 github.com/axodevelopment/servicebase v0.0.9 h1:H1bV1Al+92FCRzkZb02gbekdRPiLChH7tnWjjX4QPiw=
 github.com/axodevelopment/servicebase v0.0.9/go.mod h1:FJ0/VAU/jvrxzIUBxekM8QP+wv3az89Wep17NNG009M=
 github.com/bytedance/sonic v1.11.6 h1:oUp34TzMlL+OY1OUWxHqsdkgC/Zfc85zGqw9siXjrc0=

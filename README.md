@@ -8,4 +8,23 @@ https://github.com/axodevelopment/ocp-virtualcluster
 This is the dynamic plug repo
 https://github.com/axodevelopment/virtualcluster-plugin
 
-docker buildx build --platform linux/amd64 -t docker.io/axodevelopment/virtualcluster-api:v1.0.c --push .
+docker buildx build --platform linux/amd64 -t docker.io/axodevelopment/virtualcluster-api:v1.0.g --push .
+
+```bash
+
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: virtualcluster-api
+  namespace: virtualcluster-system
+  labels:
+    app: virtualcluster-api
+spec:
+  to:
+    kind: Service
+    name: virtualcluster-api
+  tls:
+    termination: edge
+  port:
+    targetPort: 8080
+```

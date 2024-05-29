@@ -18,7 +18,7 @@ spec:
       serviceAccountName: virtualcluster-api
       containers:
         - name: virtualcluster-api
-          image: docker.io/axodevelopment/virtualcluster-api:v1.0.f
+          image: docker.io/axodevelopment/virtualcluster-api:v1.0.g
           ports:
             - containerPort: 8080
           env:

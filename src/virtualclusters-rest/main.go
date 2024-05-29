@@ -124,6 +124,7 @@ func getKubeClient() (*kubernetes.Clientset, error) {
 	clientset, cerr := kubernetes.NewForConfig(cfg)
 
 	if cerr != nil {
+		fmt.Println(err)
 		return nil, err
 	}
 
@@ -153,12 +154,14 @@ func getVirtualClustersByAllNamespace(client *kubernetes.Clientset) (organizatio
 	raw, err := result.Raw()
 
 	if err != nil {
+		fmt.Println(err)
 		return vcs, err
 	}
 
 	err = json.Unmarshal(raw, &vcs)
 
 	if err != nil {
+		fmt.Println(err)
 		return vcs, err
 	}
 
@@ -185,12 +188,14 @@ func getVirtualClustersByNamespaceName(namespace string, name string, client *ku
 	raw, err := result.Raw()
 
 	if err != nil {
+		fmt.Println(err)
 		return vcs, err
 	}
 
 	err = json.Unmarshal(raw, &vcs)
 
 	if err != nil {
+		fmt.Println(err)
 		return vcs, err
 	}
 
@@ -216,12 +221,14 @@ func getVirtualClustersByNamespace(namespace string, client *kubernetes.Clientse
 	raw, err := result.Raw()
 
 	if err != nil {
+		fmt.Println(err)
 		return vcs, err
 	}
 
 	err = json.Unmarshal(raw, &vcs)
 
 	if err != nil {
+		fmt.Println(err)
 		return vcs, err
 	}
 
