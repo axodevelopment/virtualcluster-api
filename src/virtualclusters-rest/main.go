@@ -168,9 +168,9 @@ func getVirtualClustersByAllNamespace(client *kubernetes.Clientset) (organizatio
 	return vcs, nil
 }
 
-func getVirtualClustersByNamespaceName(namespace string, name string, client *kubernetes.Clientset) (organizationv1.VirtualClusterList, error) {
+func getVirtualClusterByNamespaceName(namespace string, name string, client *kubernetes.Clientset) (organizationv1.VirtualCluster, error) {
 
-	var vcs organizationv1.VirtualClusterList
+	var vcs organizationv1.VirtualCluster
 	//test by getting pods and displaying them
 	//pods, err := client.CoreV1().Pods("openshift-multus").List(context.TODO(), metav1.ListOptions{})
 	result := client.RESTClient().
@@ -182,6 +182,7 @@ func getVirtualClustersByNamespaceName(namespace string, name string, client *ku
 		Do(context.TODO())
 
 	if result.Error() != nil {
+		fmt.Println(result.Error())
 		return vcs, result.Error()
 	}
 
@@ -255,12 +256,12 @@ func serviceLogic(svc *sb.Service, client *kubernetes.Clientset) {
 		namespace := ctx.Param("namespace")
 		name := ctx.Param("name")
 
-		vcs, err := getVirtualClustersByNamespaceName(namespace, name, client)
+		vc, err := getVirtualClusterByNamespaceName(namespace, name, client)
 
 		if err != nil {
 			ctx.JSON(http.StatusNotFound, nil)
 		} else {
-			ctx.JSON(http.StatusOK, vcs)
+			ctx.JSON(http.StatusOK, vc)
 		}
 	})
 
