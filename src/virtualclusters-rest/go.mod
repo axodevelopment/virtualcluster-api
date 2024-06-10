@@ -3,7 +3,6 @@ module github.com/axodevelopment/virtualcluster-api/virtualclusters-rest
 go 1.22.3
 
 require (
-	github.com/axodevelopment/ocp-virtualcluster/controller v0.0.0-20240529220406-417dd92c89c4
 	github.com/axodevelopment/servicebase v0.0.9
 	github.com/gin-gonic/gin v1.10.0
 	github.com/spf13/viper v1.18.2
@@ -13,6 +12,7 @@ require (
 require sigs.k8s.io/controller-runtime v0.16.3 // indirect
 
 require (
+	github.com/axodevelopment/ocp-virtualcluster/controller v0.0.0-20240610010621-68d56f1fe4c3 // indirect
 	github.com/bytedance/sonic v1.11.6 // indirect
 	github.com/bytedance/sonic/loader v0.1.1 // indirect
 	github.com/cloudwego/base64x v0.1.4 // indirect
