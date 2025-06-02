@@ -1,0 +1,19 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: virtualcluster-api
+  namespace: virtualcluster-system
+  labels:
+    app: virtualcluster-api
+  annotations:
+    haproxy.router.openshift.io/rewrite-target: /
+spec:
+  host: virtualcluster-api-virtualcluster-system.apps.axolab.axodevelopment.dev
+  path: /virtualclusters/Dashboard
+  to:
+    kind: Service
+    name: virtualcluster-api
+  port:
+    targetPort: 8080
+  tls:
+    termination: edge
